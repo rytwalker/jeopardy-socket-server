@@ -21,15 +21,15 @@ io.on('connection', socket => {
 
   socket.emit('update users', { users });
 
-  socket.on('update score', username => {
-    console.log(username);
+  socket.on('update score', user => {
+    console.log(user);
     users.forEach(u => {
-      if (u.username === username) {
+      if (u.id === user.id) {
         u.score += 1;
       }
     });
 
-    socket.broadcast.emit('score updated', { users });
+    socket.broadcast.emit('score updated', user.id);
   });
 
   socket.on('add user', username => {
@@ -39,16 +39,20 @@ io.on('connection', socket => {
     ++numUsers;
     addedUser = true;
 
+    let newUser = { username, score: 0, id: uuid() };
+    users.push(newUser);
+
     socket.emit('login', {
-      numUsers: numUsers
+      numUsers: numUsers,
+      newUser
     });
     // update users
-    users.push({ username, score: 0, id: uuid() });
+
     // echo globally (all clients) that a person has connected
     socket.broadcast.emit('user joined', {
       username: socket.username,
       numUsers: numUsers,
-      users
+      newUser
     });
   });
 
