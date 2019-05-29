@@ -46,10 +46,9 @@ io.on('connection', socket => {
       numUsers: numUsers,
       newUser
     });
-    // update users
 
     // echo globally (all clients) that a person has connected
-    socket.broadcast.emit('user joined', {
+    io.emit('user joined', {
       username: socket.username,
       numUsers: numUsers,
       newUser
