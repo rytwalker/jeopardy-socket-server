@@ -19,17 +19,25 @@ io.on('connection', socket => {
   let addedUser = false;
   console.log('a user connected.');
 
+  socket.on('select user', user => {
+    io.emit('selected user', user.id);
+  });
+
+  socket.on('deselect user', () => {
+    console.log('am i getting here?');
+    io.emit('deselected user');
+  });
+
   socket.emit('update users', { users });
 
   socket.on('update score', user => {
-    console.log(user);
     users.forEach(u => {
       if (u.id === user.id) {
         u.score += 1;
       }
     });
 
-    socket.broadcast.emit('score updated', user.id);
+    io.emit('score updated', user.id);
   });
 
   socket.on('add user', username => {
